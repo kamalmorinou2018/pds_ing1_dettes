@@ -18,7 +18,7 @@ public class PoolConnexion  {
 	 private String passwd = "root";
 	 private  ArrayList<Connection> pool = new ArrayList<Connection>();
 	 static int Connectionused=0;
-	 private int poolnumcon=5;
+	 private static int poolnumcon=2;
 	 
 	
 	 public PoolConnexion() throws SQLException, ClassNotFoundException {
