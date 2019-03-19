@@ -15,8 +15,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
-import Serialisation.Personne;
-import Serialisation.Serialisation;
 
 
 public class Server {
@@ -31,22 +29,16 @@ public void rem() throws IOException, ParseException, ClassNotFoundException, SQ
 	PoolConnexion pool = new PoolConnexion();
 	serversocket = new ServerSocket(8041);
 	for(int i=0;i<numberclients;i++) {
-		ConnectionThread client = new ConnectionThread(pool,socket,nombredeclient,port,serversocket);
-		pooldethread.add(client);
+		ConnectionThread ct = new ConnectionThread(pool,socket,nombredeclient,port,serversocket);
+		pooldethread.add(ct);
 	}
 }
 
 public static void main(String[] args) throws ClassNotFoundException, IOException, ParseException, SQLException {
-
-	
 	new Server().rem();
+	
 	for(int i=0;i<numberclients;i++) {
 		new Service(pooldethread,i).start();
 	}
 	
-
-
-
-
-}
-}
+}}

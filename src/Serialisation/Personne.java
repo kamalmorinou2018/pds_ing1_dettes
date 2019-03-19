@@ -1,32 +1,44 @@
-package Serialisation;
+package serialisation;
+
+import javafx.beans.property.SimpleStringProperty;
 
 public class Personne 
 {
-private String firstname;
-private String secondname;
-private String age;
-public Personne(String firstname, String secondname, String age) {
-	this.firstname = firstname;
-	this.secondname = secondname;
-	this.age = age;
-}
-public String getfirstname() {
-	return firstname;
-}
-public void setfirstname(String firstname) {
-	this.firstname = firstname;
-}
-public String getsecondname() {
-	return secondname;
-}
-public void setsecondname(String secondname) {
-	this.secondname = secondname;
-}
-public String getage() {
-	return age;
-}
-public void setage(String age) {
-	this.age = age;
-}
- 
+	private SimpleStringProperty Magazin;
+    private SimpleStringProperty Annee;
+	private SimpleStringProperty Ca;
+
+    public Personne() {
+    	this.Magazin=new SimpleStringProperty();
+    	this.Annee=new SimpleStringProperty();
+    	this.Ca=new SimpleStringProperty();}
+    
+
+public Personne(String magazin, String annee, String ca) {
+  	this.Magazin=new SimpleStringProperty(magazin);
+	this.Annee=new SimpleStringProperty(annee);
+	this.Ca=new SimpleStringProperty(ca);
+	}
+
+
+public String getMagazin() {
+		return Magazin.get();
+	}
+	public void setMagazin(String Magazin) {
+		this.Magazin.set(Magazin);
+	}
+	public String getAnnee() {
+		return Annee.get();
+	}
+	public void setAnnee(String ANNEE) {
+		this.Annee.set(ANNEE);
+	}
+	public String getCa() {
+		return Ca.get();
+	}
+	public void setCa(String Magazin) {
+		this.Ca.set(Magazin);
+	}
+
+
 }

@@ -4,5 +4,8 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Tamazight/Desktop/com.mysql.jdbc_5.1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/Tamazight/Desktop/json-simple-1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Tamazight/Desktop/fx_table_adapter.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Tamazight/Desktop/jfxswt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Tamazight/Desktop/jfxrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

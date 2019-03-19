@@ -1,4 +1,4 @@
-package Serialisation;
+package serialisation;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,5 +26,17 @@ public class Serialisation {
 
 	
 	
+	//Test unitaire 
+	public static void main(String[] args) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		Serialisation sr = new Serialisation();
+		JSONObject json =new JSONObject();
+		 Personne ps = new Personne();
+		  ps.setMagazin("magasin");
+		  ps.setAnnee("2019");
+		  ps.setCa("1000");
+		  json = sr.serialisationDTO(ps);
+		  System.out.println(json.toJSONString().equals("{\"Annee\":\"2019\",\"Magazin\":\"magasin\",\"Ca\":\"1000\"}"));
+		
+	}
 	
 }
