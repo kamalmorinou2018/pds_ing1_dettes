@@ -25,8 +25,8 @@ import javafx.event.ActionEvent;
 public class Controller  {
 private View v;
 private Socket socket;
-private PrintStream out;
 private EventHandler<ActionEvent> SELECT;
+private EventHandler<ActionEvent> TOTAL;
 
 public Controller(View v) {
 	this.v = v;
@@ -35,22 +35,33 @@ public Controller() {
 	
 }
 
-public int redevance(int x) {
-	return(x*13/100);
+public long redevance(long l, long m , long n) {
+	return (long) ((l*5/100)+m+(n*0.001));
 }
 
 public void action() {
 	// TODO Auto-generated method stub
 	try {
-		//socket = new Socket("192.168.10.9",8041);
+		//socket = new Socket("192.168.10.45",8041);
 		socket = new Socket("localhost",8041);
+		if(socket.isBound()) {
+			System.out.println("-*-*-*-*-*--*-*-*-*-*-**-*-");
+		}
+		PrintStream out = new PrintStream(socket.getOutputStream());
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		out = new PrintStream(socket.getOutputStream());
+	} catch (Exception e) {
+		System.out.println(" impossible de se connecter au serveur le nombre des clients atteint");
+		e.printStackTrace();
+	}
 		Serialisation sr = new Serialisation();
 		JSONObject json =new JSONObject();
 		SELECT = e2 ->{
 		if(this.v.getFirstName().getText().equals("") && this.v.getName().getText().equals("")) {
 		try {
+		PrintStream out = new PrintStream(socket.getOutputStream());
+		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+
+		
 		out.println("read");
 		out.flush();
 		this.v.getData().clear();
@@ -68,8 +79,11 @@ public void action() {
 			a.printStackTrace();
 			}}
 		else if(this.v.getFirstName().getText().length()!=0 && this.v.getName().getText().length()!=0) {
+			try{
+			PrintStream out = new PrintStream(socket.getOutputStream());
+			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			
 				this.v.getData().clear();
-				try{
 				System.out.println("chercher");
 				out.println("search");
 				out.flush();
@@ -77,40 +91,64 @@ public void action() {
 				out.flush();
 				out.println(this.v.getName().getText());
 				out.flush();
-				do{
+				int i=0;
+		    	String fre="0";
+		    	String surf ="0";
+		    	String prson = in.readLine();
+				if(prson!="rien") {
+					fre = prson;
 					JSONObject jso =new JSONObject();
-					String prson = in.readLine();
-		    	if(prson!="rien") {
-		    		
+					 surf = in.readLine();
 					//insertioon de person dans la bd
-		    		System.out.println("object recu de serveur"+prson);
+		    		System.out.println("object recu de serveur"+prson+" fre"+fre+"surface"+surf);
+		    		prson = in.readLine();
 		    		jso = sr.deserialisation(prson);
 					Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"));
 					this.v.getData().add(per);
 					//calcule redevance
-					this.v.getLabel1P().setText(Long.toString(Long.parseLong(per.getCa())*13/100)+" $");
-				
-		    	}
+					this.v.getLabel1P().setText(Long.toString(this.redevance(Long.parseLong(per.getCa()), Long.parseLong(surf), Long.parseLong(fre))));
 		    	
-				
-				}while(in.ready());
-				}catch(Exception e) {
-					
 				}
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
 				
 			}
 			
-			};this.v.getImport().setOnAction(SELECT);
+			
+		};this.v.getImport().setOnAction(SELECT);
+			
+			TOTAL = e4 ->{
+				try{
+					String str = null; 			
+				PrintStream out = new PrintStream(socket.getOutputStream());
+				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				while(in.ready()){ 
+					  System.out.println(in.readLine()+"pour vider"); 
+					}
+				
+				
+				out.println("total");
+				out.flush();
+				out.println(this.v.getComboBox().getSelectionModel().getSelectedItem());
+				out.flush();
+				String prson = in.readLine();
+				this.v.getTotalz().setText(prson);
+				
+				
+				}catch(Exception e) {
+				e.printStackTrace();
+				}
+					
+			};this.v.getTotal().setOnAction(TOTAL);	
     
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
+	
 	
 	}
 public static void main(String[] args) {
 	Controller c = new Controller();
-	System.out.println(c.redevance(100)==(100*13/100));
+	System.out.println(c.redevance(100,100,100)==10);
 }
 
 }

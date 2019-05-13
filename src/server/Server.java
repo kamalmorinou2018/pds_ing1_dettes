@@ -25,8 +25,8 @@ private static ArrayList<Thread> pooldethread = new ArrayList<Thread>();
 private static int numberclients = 3;
 Socket socket;
 
-public void rem() throws IOException, ParseException, ClassNotFoundException, SQLException{
-	PoolConnexion pool = new PoolConnexion();
+public void rem(PoolConnexion pool) throws IOException, ParseException, ClassNotFoundException, SQLException{
+	
 	serversocket = new ServerSocket(8041);
 	for(int i=0;i<numberclients;i++) {
 		ConnectionThread ct = new ConnectionThread(pool,socket,nombredeclient,port,serversocket);
@@ -35,10 +35,14 @@ public void rem() throws IOException, ParseException, ClassNotFoundException, SQ
 }
 
 public static void main(String[] args) throws ClassNotFoundException, IOException, ParseException, SQLException {
-	new Server().rem();
+	PoolConnexion pool = new PoolConnexion();
+	new Server().rem(pool);
 	
 	for(int i=0;i<numberclients;i++) {
+	
 		new Service(pooldethread,i).start();
+	
 	}
+	
 	
 }}

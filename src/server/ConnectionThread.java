@@ -84,14 +84,15 @@ public class ConnectionThread extends Thread {
 
 
 	public void  run() {
+
 		try {
 		Socket client;
+		System.out.println("le serveur est en attente");
 		client = serversocket.accept();
+		nombredeclient=nombredeclient+1;
+		System.out.println("le nombre de client est :"+nombredeclient);
 		while(true){
-			nombredeclient=nombredeclient+1;
-			System.out.print("le nombre de client est :"+nombredeclient);
 			BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-			PrintStream ous = new PrintStream(client.getOutputStream());
 		    	Serialisation ser = new Serialisation();
 	    		JSONObject object =new JSONObject();
 				 Serialisation sr = new Serialisation();
@@ -116,14 +117,20 @@ public class ConnectionThread extends Thread {
 				System.out.println("pool connection disponible "+pool.getpoolnumcon());	
 	    		}*/
 	    		if(p.equals("read")) {
+	    			PrintStream ous = new PrintStream(client.getOutputStream());
 	    			System.out.println("read entrer");
 	    			System.out.println("pool connection disponible "+pool.getpoolnumcon());
+	    			if(pool.getpoolnumcon()==0) {
+						System.out.println("------------pool de connexion est saturé--------------- ");
+						
+						
+					}else {
 					Connection  conn =pool.getConnexion();
 					Statement state = conn.createStatement();
 					System.out.println("pool connection used "+pool.getConnectionused());
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());
 					//temps d'attente d'insertion d'une requette
-					//this.sleep(30000);
+					this.sleep(10000);
 					ResultSet res = state.executeQuery("SELECT * FROM masca");
 					pool.ReturnConnectionTopool(conn);
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());	
@@ -141,12 +148,25 @@ public class ConnectionThread extends Thread {
 	    					ous.flush();
 	    				  
 	    			}
-	    		}
+	   
+	    			
+	    		}}
 	    		else if(p.equals("search")) {
+	    			PrintStream ous = new PrintStream(client.getOutputStream());
 	    			System.out.println("chercher");
 	    			System.out.println("pool connection disponible "+pool.getpoolnumcon());
+	    			if(pool.getpoolnumcon()==0) {
+						System.out.println("------------pool de connexion est saturé--------------- ");
+						
+						
+					}else {
 					Connection  conn =pool.getConnexion();
 					Statement state = conn.createStatement();
+					Statement state2 = conn.createStatement();
+					Statement state3 = conn.createStatement();
+					Statement state4 = conn.createStatement();
+					Statement state5 = conn.createStatement();
+					Statement state6 = conn.createStatement();
 					System.out.println("pool connection used "+pool.getConnectionused());
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());
 					//temps d'attente d'insertion d'une requette
@@ -154,13 +174,29 @@ public class ConnectionThread extends Thread {
 					String zer = in.readLine();
 					String sdf = in.readLine();
 					System.out.println(zer+" recu "+sdf);
-					ResultSet res = state.executeQuery("SELECT * FROM masca where magasin = '"+sdf+"' and annee = '"+zer+"' ");
+					ResultSet res = state2.executeQuery("SELECT * FROM masca where magasin = '"+sdf+"' and annee = '"+zer+"' ");
+					ResultSet loc = state3.executeQuery("SELECT * FROM location where magasin = '"+sdf+"' and annee = '"+zer+"' ");
+					ResultSet fre = state.executeQuery("SELECT * FROM frequentation where magasin = '"+sdf+"' and annee = '"+zer+"' ");					
 					pool.ReturnConnectionTopool(conn);
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());	
-	    			if(res.wasNull()) {
+	    			if(res.wasNull() || fre.wasNull() || loc.wasNull() ) {
 	    				ous.println("rien");
     					ous.flush();
 	    			}
+	    			while(fre.next() && loc.next()) {
+							System.out.println(" fdfv "+fre.getString("numbrefr"));
+							ous.println(fre.getString("numbrefr"));
+    						ous.flush();
+    					if(loc.getString("emplacement").equals("privilegie")) {
+    						ous.println(Long.parseLong(loc.getString("surface"))*2500);
+    						ous.flush();
+	    			    }else {
+    						ous.println(Long.parseLong(loc.getString("surface"))*2000);
+        					ous.flush();
+    					}
+					}
+	    			
+	    			
 					while(res.next()) {
 	    				  String a = res.getString("magasin");
 	    				  String b = res.getString("annee");
@@ -175,13 +211,81 @@ public class ConnectionThread extends Thread {
 	    					ous.println(json.toJSONString());
 	    					ous.flush();
 	    			}
+					
+				
+					}}
+	    		else if(p.equals("total")) {
+	    			PrintStream ous = new PrintStream(client.getOutputStream());
+	    			System.out.println("pool connection disponible "+pool.getpoolnumcon());
+	    			if(pool.getpoolnumcon()==0) {
+						System.out.println("------------pool de connexion est saturé--------------- ");
+						
+						
+					}else {
+					Connection  conn =pool.getConnexion();
+					Statement state4 = conn.createStatement();
+					Statement state5 = conn.createStatement();
+					Statement state6 = conn.createStatement();
+					System.out.println("pool connection used "+pool.getConnectionused());
+					System.out.println("pool connection disponible "+pool.getpoolnumcon());
+					//temps d'attente d'insertion d'une requette
+					//this.sleep(30000);
+					String zer = in.readLine();
+					ResultSet totalca = state4.executeQuery("SELECT * FROM masca ");
+					ResultSet totalloc = state5.executeQuery("SELECT * FROM location ");
+					ResultSet totalfre = state6.executeQuery("SELECT * FROM frequentation ");
+					long ltotalca=0;
+					long ltotalloc=0;
+					long ltotalfre=0;
+					long totalcomercial=0;
+					String year =zer;
+					while(totalca.next()) {
+						if(totalca.getString("annee").equals(year)) {
+						ltotalca=ltotalca+Long.parseLong(totalca.getString("chiffreaffaire"));
+					}
+					}
+					while(totalloc.next()) {
+					if(totalloc.getString("emplacement").equals("privilegie") && totalloc.getString("annee").equals(year)) {
+						ltotalloc=ltotalloc+Integer.parseInt(totalloc.getString("surface"))*2500;
+					}else if(totalloc.getString("annee").equals(year)) {
+						ltotalloc=ltotalloc+Integer.parseInt(totalloc.getString("surface"))*2000;
+					}
+					
+					}
+					
+					while(totalfre.next()) {
+						if(totalfre.getString("annee").equals(year)) {
+						ltotalfre=ltotalfre+Integer.parseInt(totalfre.getString("numbrefr"));
+						}
+					}
+					totalcomercial=(long) (ltotalca*0.05+ltotalloc+ltotalfre*0.001);
+					  
+					System.out.println("le total de redevance pour le centre commercial est : "+totalcomercial);
+					
+					pool.ReturnConnectionTopool(conn);
+					
+					System.out.println("pool connection disponible "+pool.getpoolnumcon());	
+	    			
+					if(totalca.wasNull() || totalloc.wasNull() || totalfre.wasNull() ) {
+	    				ous.println("rien");
+    					ous.flush();
+	    			}
+	    			
+						ous.println(totalcomercial);
+    					ous.flush();
+    					
+    					
 	    		}
+	    		
+	    		
+	    		
+	    		
 		
 		}
+	    		}
 		
 		}catch(Exception e) {
-			System.out.println("vous avez dépassé ");
-			e.printStackTrace();
+
 		}
 		
 		

@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -26,15 +27,34 @@ import serialisation.Personne;
 
 public class View {
 	private Button Import;
-   	private TableView myTableView;
+	private Button Total;
+	private TableView myTableView;
 	private TableView Table;
 	ObservableList<Personne> Data ;
 	private TextField Name;
 	private TextField FirstName;
 	private Label label1P;
-
+	private Label totalz;
+	private  ComboBox<String> comboBox ;
+	private TextField p;
 	private Label resultat;
 	
+	
+	
+	public Label getTotalz() {
+		return totalz;
+	}
+
+
+
+
+	public void setTotalz(Label totalz) {
+		this.totalz = totalz;
+	}
+
+
+
+
 	public Label getResultat() {
 		return resultat;
 	}
@@ -92,8 +112,8 @@ public class View {
 		GridPane grid3 = new GridPane();
 		GridPane gridField = new GridPane();
 		gridField.setPadding(new Insets(10, 10, 10, 10));
-		gridField.setVgap(5);
-		gridField.setHgap(5);
+		gridField.setVgap(8);
+		gridField.setHgap(8);
 		GridPane labels = new GridPane();
 		labels.setPadding(new Insets(10, 10, 10, 10));
 		labels.setVgap(8);
@@ -116,14 +136,17 @@ public class View {
 		label1P.setTextFill(Color.RED);
 		GridPane.setConstraints(label1P, 2, 1);
 		labels.getChildren().add(label1P);
+		
+		
+		
 		Name = new TextField();
-		Name.setPromptText("Name");
+		Name.setPromptText("Magasin");
 		Name.setPrefColumnCount(10);
 		GridPane.setConstraints(Name, 1, 2);
 		gridField.getChildren().add(Name);
-
+   
 		FirstName = new TextField();
-		FirstName.setPromptText("FirstName");
+		FirstName.setPromptText("Année");
 		FirstName.setPrefColumnCount(10);
 		GridPane.setConstraints(FirstName, 2, 2);
 		gridField.getChildren().add(FirstName);
@@ -138,6 +161,29 @@ public class View {
 		TableColumn firstNameCol = new TableColumn("Magazin");
         TableColumn lastNameCol = new TableColumn("Annee");
         TableColumn emailCol = new TableColumn("Ca");
+
+       
+        Total = new Button(" total ");
+		GridPane.setConstraints(Total, 1, 6);
+		labels.getChildren().add(Total);
+        comboBox = new ComboBox<String>();
+        ObservableList<String> list = FXCollections.observableArrayList("2018","2017");
+        comboBox.setItems(list);
+        comboBox.getSelectionModel().select(1);
+		Label pr = new Label("la redevance totale du centre commercial :  ");
+		pr.setTextFill(Color.GREENYELLOW);
+		GridPane.setConstraints(pr, 2, 6);
+		labels.getChildren().add(pr);
+		
+		totalz = new Label(" 0");
+		totalz.setTextFill(Color.GREENYELLOW);
+		GridPane.setConstraints(totalz, 4, 6);
+		labels.getChildren().add(totalz);
+		
+		
+		GridPane.setConstraints(comboBox, 3, 6);
+		labels.getChildren().add(comboBox);
+        
         
         Table.getColumns().addAll(firstNameCol, lastNameCol,emailCol);
         firstNameCol.setCellValueFactory(
@@ -147,11 +193,8 @@ public class View {
         	    new PropertyValueFactory<Personne,String>("Annee")
         	);
         	emailCol.setCellValueFactory(
-        	    new PropertyValueFactory<Personne,String>("Ca")
-        	);
-        	
-
-        
+        	 new PropertyValueFactory<Personne,String>("Ca")
+        	);	
         Data = FXCollections.observableArrayList();
         Table.setItems(Data);
         GridPane.setConstraints(Table, 3, 4);
@@ -161,10 +204,11 @@ public class View {
 	    grid3.getChildren().add(gridField);
 	    grid3.setStyle("-fx-background-color: black");
 	    arg0.setScene(new Scene(grid3, 1140, 500));
-	    return arg0;	
+	    
+	    return arg0;		    
+	    
 	}
 	
-
 
 	public TextField getName() {
 		return Name;
@@ -182,6 +226,29 @@ public class View {
 	public void setData(ObservableList<Personne> data) {
 		this.Data = data;
 	}
-	
+   	public Button getTotal() {
+		return Total;
+	}
+
+
+
+
+	public void setTotal(Button total) {
+		Total = total;
+	}
+
+
+
+
+	public ComboBox<String> getComboBox() {
+		return comboBox;
+	}
+
+
+
+
+	public void setComboBox(ComboBox<String> comboBox) {
+		this.comboBox = comboBox;
+	}
 
 }

@@ -10,8 +10,6 @@ public class Service extends Thread {
 		this.i=i;
 	}
 public void run() {
-
 		pooldethread.get(i).run();
-	
 }
 }

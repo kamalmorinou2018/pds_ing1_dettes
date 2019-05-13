@@ -17,5 +17,4 @@ public void start(Stage arg0) throws Exception {
 	arg0.show();
 	Controller c = new Controller(a);
 	c.action();
-}
-}
+}}
