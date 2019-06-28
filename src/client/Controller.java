@@ -36,17 +36,14 @@ public Controller() {
 }
 
 public long redevance(long l, long m , long n) {
-	return (long) ((l*5/100)+m+(n*0.001));
+	return (long) ((l*5/100)+m/12+(n*0.001));
 }
 
 public void action() {
 	// TODO Auto-generated method stub
 	try {
-		//socket = new Socket("192.168.10.45",8041);
-		socket = new Socket("localhost",8041);
-		if(socket.isBound()) {
-			System.out.println("-*-*-*-*-*--*-*-*-*-*-**-*-");
-		}
+		socket = new Socket("192.168.5.181",8041);
+		//socket = new Socket("localhost",8041);
 		PrintStream out = new PrintStream(socket.getOutputStream());
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 	} catch (Exception e) {
@@ -60,29 +57,58 @@ public void action() {
 		try {
 		PrintStream out = new PrintStream(socket.getOutputStream());
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-		
 		out.println("read");
 		out.flush();
 		this.v.getData().clear();
+		this.v.getData1().clear();
+		this.v.getData2().clear();
+		System.out.println("h1");
 		do{
 			JSONObject jso =new JSONObject();
 			String person = in.readLine();
-    		//insertioon de person dans la bd
+			if(person.equals("0")) {break;}
+			else{
+			//insertioon de person dans la bd
     		System.out.println("object recu de serveur"+person);
-    		jso = sr.deserialisation(person);
-    		
-			Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"));
+    		jso = sr.deserialisation(person);	
+			Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"),(String)jso.get("Mois"));
 			this.v.getData().add(per);
-		}while(in.ready());
-			}catch(Exception a) {
+    		}
+			}while(in.ready());
+			
+		do{
+			JSONObject jso =new JSONObject();
+			String person = in.readLine();
+			if(person.equals("1")) {break;}
+			else{
+			//insertioon de person dans la bd
+    		System.out.println("object recu de serveur"+person);
+    		jso = sr.deserialisation(person);	
+			Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"),(String)jso.get("Mois"));
+			this.v.getData1().add(per);
+    		}
+			}while(in.ready());
+		do{
+			JSONObject jso =new JSONObject();
+			String person = in.readLine();
+			//insertioon de person dans la bd
+    		System.out.println("object recu de serveur"+person);
+    		jso = sr.deserialisation(person);	
+			Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"),(String)jso.get("Mois"));
+			this.v.getData2().add(per);
+			}while(in.ready());
+		
+		
+		System.out.println("h2");
+		
+		
+		}catch(Exception a) {
 			a.printStackTrace();
 			}}
-		else if(this.v.getFirstName().getText().length()!=0 && this.v.getName().getText().length()!=0) {
+		else if(this.v.getFirstName().getText().length()!=0 && this.v.getName().getText().length()!=0 && this.v.getMois().getText().length()!=0) {
 			try{
 			PrintStream out = new PrintStream(socket.getOutputStream());
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
 				this.v.getData().clear();
 				System.out.println("chercher");
 				out.println("search");
@@ -91,19 +117,24 @@ public void action() {
 				out.flush();
 				out.println(this.v.getName().getText());
 				out.flush();
+				out.println(this.v.getMois().getText());
+				out.flush();
 				int i=0;
 		    	String fre="0";
 		    	String surf ="0";
 		    	String prson = in.readLine();
+		    	System.out.println("0");
 				if(prson!="rien") {
 					fre = prson;
 					JSONObject jso =new JSONObject();
 					 surf = in.readLine();
+					 System.out.println("1");
 					//insertioon de person dans la bd
 		    		System.out.println("object recu de serveur"+prson+" fre"+fre+"surface"+surf);
 		    		prson = in.readLine();
+		    		System.out.println("2");
 		    		jso = sr.deserialisation(prson);
-					Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"));
+					Personne per = new Personne((String)jso.get("Magazin"),(String)jso.get("Annee"),(String)jso.get("Ca"),(String)jso.get("Mois"));
 					this.v.getData().add(per);
 					//calcule redevance
 					this.v.getLabel1P().setText(Long.toString(this.redevance(Long.parseLong(per.getCa()), Long.parseLong(surf), Long.parseLong(fre))));
@@ -115,19 +146,19 @@ public void action() {
 				
 				
 			}
+		
 			
 			
 		};this.v.getImport().setOnAction(SELECT);
 			
 			TOTAL = e4 ->{
 				try{
-					String str = null; 			
+				String str = null; 			
 				PrintStream out = new PrintStream(socket.getOutputStream());
 				BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 				while(in.ready()){ 
 					  System.out.println(in.readLine()+"pour vider"); 
 					}
-				
 				
 				out.println("total");
 				out.flush();
@@ -135,7 +166,6 @@ public void action() {
 				out.flush();
 				String prson = in.readLine();
 				this.v.getTotalz().setText(prson);
-				
 				
 				}catch(Exception e) {
 				e.printStackTrace();

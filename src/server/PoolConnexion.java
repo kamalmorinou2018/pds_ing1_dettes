@@ -13,12 +13,12 @@ import java.util.Properties;
 
 
 public class PoolConnexion  {
-	//String url = "jdbc:mysql://localhost:3306/pdsing";
-	private String url = "jdbc:mysql://localhost:3306/pdsing";
-	//private String user = "pds";
-	//private String passwd = "pds";
+	String url = "jdbc:mysql://localhost:3306/pdsing";
+	//private String url = "jdbc:mysql://localhost:3306/pdsing";
 	private String user = "root";
-	private String passwd = "root";
+	private String passwd = "pds";
+	//private String user = "root";
+	//private String passwd = "root";
 	 private  ArrayList<Connection> pool = new ArrayList<Connection>();
 	 static int Connectionused=0;
 	 private static int poolnumcon=2;
@@ -37,9 +37,11 @@ public class PoolConnexion  {
 		this.pool.add(conn);
 		poolnumcon=poolnumcon+1;
 		Connectionused=Connectionused-1;
-		this.Connectionused=this.Connectionused-1;
 	}
 	 public Connection getConnexion() {
+		 if(pool.size()==2) {
+			 Connectionused=0;
+		 }
 		 Connectionused=Connectionused+1;
 		 poolnumcon=poolnumcon-1;
 		 Connection conn = pool.get(0);

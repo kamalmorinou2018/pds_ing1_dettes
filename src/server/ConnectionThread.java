@@ -89,8 +89,7 @@ public class ConnectionThread extends Thread {
 		Socket client;
 		System.out.println("le serveur est en attente");
 		client = serversocket.accept();
-		nombredeclient=nombredeclient+1;
-		System.out.println("le nombre de client est :"+nombredeclient);
+		System.out.println("un nouveau client est conneté ");
 		while(true){
 			BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 		    	Serialisation ser = new Serialisation();
@@ -127,31 +126,82 @@ public class ConnectionThread extends Thread {
 					}else {
 					Connection  conn =pool.getConnexion();
 					Statement state = conn.createStatement();
+					Statement state2 = conn.createStatement();
+					Statement state3 = conn.createStatement();
 					System.out.println("pool connection used "+pool.getConnectionused());
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());
 					//temps d'attente d'insertion d'une requette
 					this.sleep(10000);
-					ResultSet res = state.executeQuery("SELECT * FROM masca");
+					
+					ResultSet res = state.executeQuery("SELECT * FROM mascamois");
+					ResultSet res1 = state2.executeQuery("SELECT * FROM location");
+					ResultSet res2 = state3.executeQuery("SELECT * FROM frequentation");
+					
 					pool.ReturnConnectionTopool(conn);
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());	
+					System.out.println("s1");
 	    			while(res.next()) {
 	    				  String a = res.getString("magasin");
 	    				  String b = res.getString("annee");
-	    				  String c = res.getString("chiffreaffaire");
+	    				  String c = res.getString("ca");
+	    				  String d = res.getString("mois");
 	    				  Personne ps = new Personne();
 	    				  ps.setMagazin(a);
 	    				  ps.setAnnee(b);
 	    				  ps.setCa(c);
+	    				  ps.setMois(d);
 	    				  json = sr.serialisationDTO(ps);
 	    					System.out.println(json.toJSONString());
 	    					ous.println(json.toJSONString());
 	    					ous.flush();
-	    				  
 	    			}
+	    			ous.println("0");
+					ous.flush();
+					while(res1.next()) {
+	    				  String a = res1.getString("magasin");
+	    				  String b = res1.getString("annee");
+	    				  String c = res1.getString("surface");
+	    				  String d = res1.getString("emplacement");
+	    				  Personne ps = new Personne();
+	    				  ps.setMagazin(a);
+	    				  ps.setAnnee(b);
+	    				  ps.setCa(c);
+	    				  ps.setMois(d);
+	    				  json = sr.serialisationDTO(ps);
+	    					System.out.println(json.toJSONString());
+	    					ous.println(json.toJSONString());
+	    					ous.flush();
+	    			}
+					ous.println("1");
+					ous.flush();
+					while(res2.next()) {
+	    				  String a = res2.getString("magasin");
+	    				  String b = res2.getString("annee");
+	    				  String c = res2.getString("mois");
+	    				  String d = res2.getString("numbrefr");
+	    				  Personne ps = new Personne();
+	    				  ps.setMagazin(a);
+	    				  ps.setAnnee(b);
+	    				  ps.setCa(c);
+	    				  ps.setMois(d);
+	    				  json = sr.serialisationDTO(ps);
+	    					System.out.println(json.toJSONString());
+	    					ous.println(json.toJSONString());
+	    					ous.flush();
+	    			}
+					
 	   
 	    			
-	    		}}
-	    		else if(p.equals("search")) {
+					System.out.println("s2");
+	    			
+	    			
+	    			
+	    		}
+	    			
+	    		
+	    		
+	    		
+	    		}else if(p.equals("search")) {
 	    			PrintStream ous = new PrintStream(client.getOutputStream());
 	    			System.out.println("chercher");
 	    			System.out.println("pool connection disponible "+pool.getpoolnumcon());
@@ -173,10 +223,11 @@ public class ConnectionThread extends Thread {
 					//this.sleep(30000);
 					String zer = in.readLine();
 					String sdf = in.readLine();
+					String mois = in.readLine();
 					System.out.println(zer+" recu "+sdf);
-					ResultSet res = state2.executeQuery("SELECT * FROM masca where magasin = '"+sdf+"' and annee = '"+zer+"' ");
+					ResultSet res = state2.executeQuery("SELECT * FROM mascamois where magasin = '"+sdf+"' and annee = '"+zer+"' "+" and mois = '"+mois+"' ");
 					ResultSet loc = state3.executeQuery("SELECT * FROM location where magasin = '"+sdf+"' and annee = '"+zer+"' ");
-					ResultSet fre = state.executeQuery("SELECT * FROM frequentation where magasin = '"+sdf+"' and annee = '"+zer+"' ");					
+					ResultSet fre = state.executeQuery("SELECT * FROM frequentation where magasin = '"+sdf+"' and annee = '"+zer+"' "+" and mois = '"+mois+"' ");					
 					pool.ReturnConnectionTopool(conn);
 					System.out.println("pool connection disponible "+pool.getpoolnumcon());	
 	    			if(res.wasNull() || fre.wasNull() || loc.wasNull() ) {
@@ -196,22 +247,25 @@ public class ConnectionThread extends Thread {
     					}
 					}
 	    			
-	    			
+	    			System.out.println("0");	
 					while(res.next()) {
+						System.out.println("1");
 	    				  String a = res.getString("magasin");
 	    				  String b = res.getString("annee");
-	    				  String c = res.getString("chiffreaffaire");
+	    				  String c = res.getString("ca");
+	    				  String d = res.getString("mois");
 	    				  Personne ps = new Personne();
 	    				  ps.setMagazin(a);
 	    				  ps.setAnnee(b);
 	    				  ps.setCa(c);
+	    				  ps.setMois(d);
 	    				  json = sr.serialisationDTO(ps);
 	    				  System.out.println("trouver dans BD "+json);
 	    					System.out.println(json.toJSONString());
 	    					ous.println(json.toJSONString());
 	    					ous.flush();
 	    			}
-					
+					System.out.println("2");	
 				
 					}}
 	    		else if(p.equals("total")) {
@@ -219,8 +273,6 @@ public class ConnectionThread extends Thread {
 	    			System.out.println("pool connection disponible "+pool.getpoolnumcon());
 	    			if(pool.getpoolnumcon()==0) {
 						System.out.println("------------pool de connexion est saturé--------------- ");
-						
-						
 					}else {
 					Connection  conn =pool.getConnexion();
 					Statement state4 = conn.createStatement();
@@ -231,7 +283,7 @@ public class ConnectionThread extends Thread {
 					//temps d'attente d'insertion d'une requette
 					//this.sleep(30000);
 					String zer = in.readLine();
-					ResultSet totalca = state4.executeQuery("SELECT * FROM masca ");
+					ResultSet totalca = state4.executeQuery("SELECT * FROM mascamois ");
 					ResultSet totalloc = state5.executeQuery("SELECT * FROM location ");
 					ResultSet totalfre = state6.executeQuery("SELECT * FROM frequentation ");
 					long ltotalca=0;
@@ -241,7 +293,7 @@ public class ConnectionThread extends Thread {
 					String year =zer;
 					while(totalca.next()) {
 						if(totalca.getString("annee").equals(year)) {
-						ltotalca=ltotalca+Long.parseLong(totalca.getString("chiffreaffaire"));
+						ltotalca=ltotalca+Long.parseLong(totalca.getString("ca"));
 					}
 					}
 					while(totalloc.next()) {

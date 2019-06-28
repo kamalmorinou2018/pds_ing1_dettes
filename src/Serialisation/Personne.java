@@ -7,20 +7,30 @@ public class Personne
 	private SimpleStringProperty Magazin;
     private SimpleStringProperty Annee;
 	private SimpleStringProperty Ca;
+	private SimpleStringProperty Mois;
 
     public Personne() {
     	this.Magazin=new SimpleStringProperty();
     	this.Annee=new SimpleStringProperty();
-    	this.Ca=new SimpleStringProperty();}
+    	this.Ca=new SimpleStringProperty();
+    	this.Mois=new SimpleStringProperty();
+    }
     
 
-public Personne(String magazin, String annee, String ca) {
+public Personne(String magazin, String annee, String ca,String mois) {
   	this.Magazin=new SimpleStringProperty(magazin);
 	this.Annee=new SimpleStringProperty(annee);
 	this.Ca=new SimpleStringProperty(ca);
+	this.Mois=new SimpleStringProperty(mois);
 	}
 
+public String getMois() {
+	return this.Mois.get();
+};
 
+public void  setMois(String Mois) {
+	this.Mois.set(Mois);
+};
 public String getMagazin() {
 		return Magazin.get();
 	}
